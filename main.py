@@ -3,6 +3,7 @@
 from World import World
 import numpy as np
 import random
+# random.seed(0)
 
 # --------------------- PARAMETERS --------------------- #
 r = -0.04
@@ -19,8 +20,6 @@ ACTIONS = [N, E, S, W]
 FINAL_STATE_CELLS = [0, 6, 12, 13, 14]
 BAD_CELLS = [0, 6, 13, 14]
 GOOD_CELLS = [12]
-
-
 # ------------------------------------------------------ #
 
 class Cell:
@@ -32,6 +31,7 @@ class Cell:
         self.w = w
 
 
+# create cells and tell them who are their neighbours
 field = {
     0: Cell(0, 0, 1, 0, 4),
     1: Cell(1, 0, 2, 1, 5),
@@ -100,16 +100,11 @@ def max_action_value(curr_world, state, curr_values):
     best_action = 1
     for counter, action in enumerate(ACTIONS):
         curr_sum = get_value_on_action(state, action, curr_values, curr_world)
-        # curr_sum = 0
-        # for next_state in range(curr_world.nStates):
-        #     curr_sum += transition_model(next_state, state, action) * (
-        #                 reward_function(state) + (omega * curr_values[next_state]))
         if counter == 0:
             value = curr_sum
         if curr_sum > value:
             value = curr_sum
             best_action = action
-    # return value
     return value, best_action
 
 
@@ -121,6 +116,7 @@ def get_policy(curr_world, curr_values):
     return np.array(curr_policy)
 
 
+# ------------------------------ #
 def value_iteration(curr_world):
     values = initiate_values(curr_world.nStates)
     delta = teta
@@ -132,12 +128,14 @@ def value_iteration(curr_world):
             delta = max(delta, abs(value - values[state]))
     policy = get_policy(curr_world, values)
     return values, policy
+# ------------------------------ #
 
 
 def initialize_policy(curr_world):
     policy = []
     for state in range(curr_world.nStates):
-        policy.append([random.choice(ACTIONS)])
+        # policy.append([random.choice(ACTIONS)])
+        policy.append([1])
     return policy
 
 
@@ -180,6 +178,7 @@ def policy_improvement(values, curr_world):
     return policy
 
 
+# ------------------------------ #
 def policy_iteration(curr_world):
     policy = initialize_policy(curr_world)
     values = {}
@@ -200,8 +199,7 @@ def policy_iteration(curr_world):
         world.plot_policy(np.array(policy))
 
     return values, np.array(policy)
-
-    # return 0,0
+# ------------------------------ #
 
 
 if __name__ == "__main__":
@@ -214,5 +212,3 @@ if __name__ == "__main__":
 
     # world.plot_value(final_values)
     # world.plot_policy(final_policy)
-
-    # return [np.random.random() for i in range(world.nStates)], np.random.randint(1, world.nActions, (world.nStates, 1))
